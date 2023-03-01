@@ -95,6 +95,10 @@ public:
     void getPlaylistInfo() {
         cout << "Playlist: " << title << " - " << description << endl;
     }
+
+    PlaylistNode *getHead() {
+        return head;
+    }
 };
 
 class PlaylistManager {
@@ -158,5 +162,9 @@ class PlaylistManager {
 
         void printPlaylistInfo(int index) {
             playlists[index - 1].getPlaylistInfo();
+        }
+
+        PlaylistNode* getPlaylistHead(int index) {
+            return playlists[index - 1].getHead();
         }
 };
