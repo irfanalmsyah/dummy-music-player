@@ -1,17 +1,19 @@
 #include <bits/stdc++.h>
-#include "playlist.h"
+#include "playback.h"
 using namespace std;
 
 int main() {
     MusicHashTable hashTable;
     PlaylistManager playlistManager;
+    PlaybackManager playbackManager;
     int choice;
     do {
         cout 
             << "\nEnter your choice:\n"
             << "0: Music Database\n"
             << "1: Playlist\n"
-            << "2: Exit\n";
+            << "2: Playback\n"
+            << "9: Exit\n";
         
         cin >> choice;
         switch (choice) {
@@ -178,6 +180,49 @@ int main() {
                 break;
 
             case 2:
+                int playbackChoice;
+                do {
+                    cout 
+                        << "\nEnter your choice:\n"
+                        << "0: Print playback\n"
+                        << "1: Add A Music to Playback\n"
+                        << "2: Play A Music from Playback\n"
+                        << "3: Add A Playlist to Playback\n"
+                        << "9: Back to Main Menu\n";
+                    cin >> playbackChoice;
+
+                    switch (playbackChoice) {
+                        case 0:
+                            playbackManager.printPlayback();
+                            break;
+
+                        case 1: {
+                            playbackManager.addMusic(hashTable);
+                            break;
+                        }
+
+                        case 2: {
+                            playbackManager.playMusic();
+                            break;
+                        }
+
+                        case 3: {
+                            int playlistIndex;
+                            cout << "Enter the index of the playlist you want to add:\n";
+                            cin >> playlistIndex;
+                            playlistManager.printPlaylistInfo(playlistIndex);
+                            PlaylistNode* playlistHead = playlistManager.getPlaylistHead(playlistIndex);
+                            playbackManager.enqueuePlaylist(playlistHead);
+                            break;
+                        }
+                        default:
+                            cout << "Invalid choice. Try again.\n";
+                            break;
+                    }
+                } while (playbackChoice != 9);
+                break;
+
+            case 9:
                 cout << "Goodbye!\n";
                 break;
 
@@ -185,6 +230,6 @@ int main() {
                 cout << "Invalid choice. Try again.\n";
                 break;
         }
-    } while (choice != 2);
+    } while (choice != 9);
     return 0;
 }
