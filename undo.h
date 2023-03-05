@@ -6,9 +6,12 @@ struct undoNode {
     string choice;
     Music* music;
     MusicHashTable* hashTable;
-    Playlist* playlist;
+    int playlistIndex;
+    PlaylistManager* playlistManager;
+    PlaybackManager* playbackManager;
     undoNode* next;
 };
+
 
 class UndoStack {
     private:
@@ -27,12 +30,7 @@ class UndoStack {
             }
         }
 
-        void push(string choice, MusicHashTable *hashTable = nullptr, Music *music = nullptr, Playlist *playlist = nullptr) {
-            undoNode* newNode = new undoNode;
-            newNode->choice = choice;
-            newNode->music = music;
-            newNode->playlist = playlist;
-            newNode->hashTable = hashTable;
+        void push(undoNode* newNode) {
             newNode->next = top;
             top = newNode;
         }
@@ -80,7 +78,8 @@ class UndoStack {
                 temp->hashTable->insert(temp->music);
                 cout << "Deleting music " << temp->music->getTitle() << " is undone." << endl;
             } else if (choice == "11") {
-                // undo create playlist
+                temp->playlistManager->playlists.pop_back();
+                cout << "Adding playlist is undone." << endl;
             } else if (choice == "12") {
                 // undo delete playlist
             } else if (choice == "130") {

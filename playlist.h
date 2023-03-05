@@ -101,13 +101,13 @@ public:
     PlaylistNode *getHead() {
         return head;
     }
+    
 };
 
 class PlaylistManager {
-    private:
-        vector<Playlist> playlists;
     public:
-        void createPlaylist() {
+        vector<Playlist> playlists;
+        Playlist createPlaylist() {
             string title, description;
             cin.ignore();
             cout << "Enter the title of the playlist:\n";
@@ -117,6 +117,7 @@ class PlaylistManager {
             Playlist playlist(title, description);
             playlists.push_back(playlist);
             cout << "Playlist created." << endl;
+            return playlist;
         }
 
         void printPlaylists() {

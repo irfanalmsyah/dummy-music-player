@@ -72,7 +72,11 @@ int main() {
                             Music* music = new Music(title, artist, yearRelease, spotifyLink, duration);
                             hashTable.insert(music);
                             cout << "Music added.\n";
-                            undoStack.push("01", &hashTable, music);
+                            undoNode newNode;
+                            newNode.choice = "01";
+                            newNode.hashTable = &hashTable;
+                            newNode.music = music;
+                            undoStack.push(&newNode);
                             break;
                         }
 
@@ -88,7 +92,11 @@ int main() {
                             } else {
                                 cout << "Music not found.\n";
                             }
-                            undoStack.push("02", &hashTable, removed);
+                            undoNode newNode;
+                            newNode.choice = "02";
+                            newNode.hashTable = &hashTable;
+                            newNode.music = removed;
+                            undoStack.push(&newNode);
                             break;
                         }
 
@@ -130,6 +138,10 @@ int main() {
 
                         case 1: {
                             playlistManager.createPlaylist();
+                            undoNode newNode;
+                            newNode.choice = "11";
+                            newNode.playlistManager = &playlistManager;
+                            undoStack.push(&newNode);
                             break;
                         }
 
@@ -167,7 +179,7 @@ int main() {
                                         break;
 
                                     case -1: {
-                                        undoStack.pop();
+                                        undoStack.undo();
                                         break;
                                     }
 
@@ -175,12 +187,13 @@ int main() {
                                         cout << "Invalid choice. Try again.\n";
                                         break;
                                 }
+        
                             } while (playlistMenuChoice != 3);
                             break;
                         }
 
                         case -1: {
-                            undoStack.pop();
+                            undoStack.undo();
                             break;
                         }
 
@@ -230,7 +243,7 @@ int main() {
                         }
 
                         case -1: {
-                            undoStack.pop();
+                            undoStack.undo();
                             break;
                         }
 
@@ -247,7 +260,7 @@ int main() {
                 break;
             
             case -1: {
-                undoStack.pop();
+                undoStack.undo();
                 break;
             }
 
