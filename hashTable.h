@@ -1,4 +1,4 @@
-#include <bits/stdc++.h>
+#include <iostream>
 using namespace std;
 
 class Music {
@@ -98,15 +98,16 @@ public:
         return NULL;
     }
 
-    bool remove(string title) {
+    Music* remove(string title) {
         int index = hash(title);
         for (auto it = table[index].begin(); it != table[index].end(); it++) {
             if ((*it)->getTitle() == title) {
+                Music* music = *it;
                 table[index].erase(it);
-                return true;
+                return music;
             }
         }
-        return false;
+        return nullptr;
     }
 
     void printTop10(MusicHashTable& hashTable) {
