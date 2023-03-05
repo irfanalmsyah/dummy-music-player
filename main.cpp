@@ -1,14 +1,17 @@
 #include <bits/stdc++.h>
-#include "playback.h"
+#include "undo.h"
 using namespace std;
 
 int main() {
     MusicHashTable hashTable;
     PlaylistManager playlistManager;
     PlaybackManager playbackManager;
+    UndoStack undoStack;
     int choice;
     do {
         cout 
+            << "This is a music player.\n"
+            << "Input -1 to undo the last operation.\n"
             << "\nEnter your choice:\n"
             << "0: Music Database\n"
             << "1: Playlist\n"
@@ -17,7 +20,7 @@ int main() {
         
         cin >> choice;
         switch (choice) {
-            case 0:
+            case 0: {
                 int tableChoice;
                 do {
                     cout 
@@ -69,6 +72,7 @@ int main() {
                             Music* music = new Music(title, artist, yearRelease, spotifyLink, duration);
                             hashTable.insert(music);
                             cout << "Music added.\n";
+                            undoStack.push("01", &hashTable, music);
                             break;
                         }
 
@@ -78,12 +82,13 @@ int main() {
                             cout << "Enter the title of the music you want to remove:\n";
                             getline(cin, title);
 
-                            bool removed = hashTable.remove(title);
-                            if (removed) {
+                            Music* removed = hashTable.remove(title);
+                            if (removed != nullptr) {
                                 cout << "Music removed.\n";
                             } else {
                                 cout << "Music not found.\n";
                             }
+                            undoStack.push("02", &hashTable, removed);
                             break;
                         }
 
@@ -93,8 +98,10 @@ int main() {
                             break;
                         }
 
-                        case 4:
+                        case -1: {
+                            undoStack.undo();
                             break;
+                        }
 
                         default:
                             cout << "Invalid choice. Try again.\n";
@@ -102,8 +109,9 @@ int main() {
                     }
                 } while (tableChoice != 4);
                 break;
+            }
 
-            case 1:
+            case 1: {
                 int playlistChoice;
                 do {
                     cout 
@@ -158,8 +166,10 @@ int main() {
                                         playlistManager.printPlaylist(playlistIndex);
                                         break;
 
-                                    case 3:
+                                    case -1: {
+                                        undoStack.pop();
                                         break;
+                                    }
 
                                     default:
                                         cout << "Invalid choice. Try again.\n";
@@ -169,8 +179,10 @@ int main() {
                             break;
                         }
 
-                        case 4:
+                        case -1: {
+                            undoStack.pop();
                             break;
+                        }
 
                         default:
                             cout << "Invalid choice. Try again.\n";
@@ -178,8 +190,9 @@ int main() {
                     }
                 } while (playlistChoice != 4);
                 break;
+            }
 
-            case 2:
+            case 2: {
                 int playbackChoice;
                 do {
                     cout 
@@ -215,16 +228,28 @@ int main() {
                             playbackManager.enqueuePlaylist(playlistHead);
                             break;
                         }
+
+                        case -1: {
+                            undoStack.pop();
+                            break;
+                        }
+
                         default:
                             cout << "Invalid choice. Try again.\n";
                             break;
                     }
                 } while (playbackChoice != 9);
                 break;
+            }
 
             case 9:
                 cout << "Goodbye!\n";
                 break;
+            
+            case -1: {
+                undoStack.pop();
+                break;
+            }
 
             default:
                 cout << "Invalid choice. Try again.\n";
