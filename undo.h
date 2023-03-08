@@ -2,14 +2,24 @@
 #include "playback.h"
 using namespace std;
 
-struct undoNode {
-    string choice;
-    Music* music;
-    MusicHashTable* hashTable;
-    int playlistIndex;
-    PlaylistManager* playlistManager;
-    PlaybackManager* playbackManager;
-    undoNode* next;
+class undoNode {
+    public:
+        string choice;
+        Music* music;
+        MusicHashTable* hashTable;
+        Playlist playlist;
+        PlaylistManager* playlistManager;
+        PlaybackManager* playbackManager;
+        undoNode* next;
+
+        undoNode() {
+            choice = "";
+            music = nullptr;
+            hashTable = nullptr;
+            playlistManager = nullptr;
+            playbackManager = nullptr;
+            next = nullptr;
+        }
 };
 
 
@@ -81,7 +91,7 @@ class UndoStack {
                 temp->playlistManager->playlists.pop_back();
                 cout << "Adding playlist is undone." << endl;
             } else if (choice == "12") {
-                // undo delete playlist
+                temp->playlistManager->playlists.push_back(temp->playlist);
             } else if (choice == "130") {
                 // undo add music to the selected playlist
             } else if (choice == "131") {

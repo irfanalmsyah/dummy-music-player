@@ -17,11 +17,24 @@ private:
     PlaylistNode* head;
     PlaylistNode* tail;
 public:
-    Playlist(string title, string description) {
+    Playlist() {
+        title = "";
+        description = "";
+        head = nullptr;
+        tail = nullptr;
+    }
+
+    void setter(string title, string description) {
         this->title = title;
         this->description = description;
-        this->head = nullptr;
-        this->tail = nullptr;
+    }
+
+    void setHead(PlaylistNode* head) {
+        this->head = head;
+    }
+
+    void setTail(PlaylistNode* tail) {
+        this->tail = tail;
     }
 
     void addMusic(MusicHashTable& hashTable) {
@@ -114,7 +127,8 @@ class PlaylistManager {
             getline(cin, title);
             cout << "Enter the description of the playlist:\n";
             getline(cin, description);
-            Playlist playlist(title, description);
+            Playlist playlist;
+            playlist.setter(title, description);
             playlists.push_back(playlist);
             cout << "Playlist created." << endl;
             return playlist;
@@ -131,16 +145,18 @@ class PlaylistManager {
             }
         }
 
-        void deletePlaylist() {
+        Playlist deletePlaylist() {
             int index;
             cout << "Enter the index of the playlist you want to delete:\n";
             cin >> index;
             if (index < 1 || index > playlists.size()) {
                 cout << "Invalid index." << endl;
-                return;
+                throw "Invalid index.";
             }
+            Playlist playlist = playlists[index - 1];
             playlists.erase(playlists.begin() + index - 1);
             cout << "Playlist deleted." << endl;
+            return playlist;
         }
 
         void addMusicToPlaylist(MusicHashTable& hashTable, int index) {

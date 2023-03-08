@@ -132,9 +132,10 @@ int main() {
                     cin >> playlistChoice;
 
                     switch (playlistChoice) {
-                        case 0:
+                        case 0: {
                             playlistManager.printPlaylists();
                             break;
+                        }
 
                         case 1: {
                             playlistManager.createPlaylist();
@@ -146,7 +147,12 @@ int main() {
                         }
 
                         case 2: {
-                            playlistManager.deletePlaylist();
+                            Playlist deletedPlaylist = playlistManager.deletePlaylist();
+                            undoNode newNode;
+                            newNode.choice = "12";
+                            newNode.playlistManager = &playlistManager;
+                            newNode.playlist = deletedPlaylist;
+                            undoStack.push(&newNode);
                             break;
                         }
 
@@ -218,9 +224,10 @@ int main() {
                     cin >> playbackChoice;
 
                     switch (playbackChoice) {
-                        case 0:
+                        case 0: {
                             playbackManager.printPlayback();
                             break;
+                        }
 
                         case 1: {
                             playbackManager.addMusic(hashTable);
@@ -255,9 +262,10 @@ int main() {
                 break;
             }
 
-            case 9:
+            case 9: {
                 cout << "Goodbye!\n";
                 break;
+            }
             
             case -1: {
                 undoStack.undo();
