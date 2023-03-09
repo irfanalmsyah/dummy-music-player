@@ -1,4 +1,6 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <string>
+#include <vector>
 #include "hashTable.h"
 using namespace std;
 
@@ -15,11 +17,24 @@ private:
     PlaylistNode* head;
     PlaylistNode* tail;
 public:
-    Playlist(string title, string description) {
+    Playlist() {
+        title = "";
+        description = "";
+        head = nullptr;
+        tail = nullptr;
+    }
+
+    void setter(string title, string description) {
         this->title = title;
         this->description = description;
-        this->head = nullptr;
-        this->tail = nullptr;
+    }
+
+    void setHead(PlaylistNode* head) {
+        this->head = head;
+    }
+
+    void setTail(PlaylistNode* tail) {
+        this->tail = tail;
     }
 
     void addMusic(MusicHashTable& hashTable) {
@@ -47,7 +62,23 @@ public:
         }
     }
 
-    void removeMusic() {
+    void setMusic(Music* music) {
+        PlaylistNode* node = new PlaylistNode;
+        node->music = music;
+        node->prev = nullptr;
+        node->next = nullptr;
+        if (head == nullptr) {
+            head = node;
+            tail = node;
+        } else {
+            tail->next = node;
+            node->prev = tail;
+            tail = node;
+        }
+        cout << "Music added to the playlist: " << music->getTitle() << endl;
+    }
+
+    Music* removeMusic() {
         string title;
         cin.ignore();
         cout << "Enter the title of the music you want to remove:\n";
@@ -68,13 +99,15 @@ public:
                     current->prev->next = current->next;
                     current->next->prev = current->prev;
                 }
+                Music* music = current->music;
                 delete current;
                 cout << "Music removed from the playlist: " << title << endl;
-                return;
+                return music;
             }
             current = current->next;
         }
         cout << "Music not found in the playlist." << endl;
+        return nullptr;
     }
 
     void printPlaylist() {
@@ -99,22 +132,37 @@ public:
     PlaylistNode *getHead() {
         return head;
     }
+
+    void removeTail() {
+        if (head == nullptr) {
+            return;
+        }
+        if (head == tail) {
+            head = nullptr;
+            tail = nullptr;
+        } else {
+            tail = tail->prev;
+            tail->next = nullptr;
+        }
+    }
+    
 };
 
 class PlaylistManager {
-    private:
-        vector<Playlist> playlists;
     public:
-        void createPlaylist() {
+        vector<Playlist> playlists;
+        Playlist createPlaylist() {
             string title, description;
             cin.ignore();
             cout << "Enter the title of the playlist:\n";
             getline(cin, title);
             cout << "Enter the description of the playlist:\n";
             getline(cin, description);
-            Playlist playlist(title, description);
+            Playlist playlist;
+            playlist.setter(title, description);
             playlists.push_back(playlist);
             cout << "Playlist created." << endl;
+            return playlist;
         }
 
         void printPlaylists() {
@@ -128,32 +176,25 @@ class PlaylistManager {
             }
         }
 
-        void deletePlaylist() {
+        Playlist* deletePlaylist() {
             int index;
             cout << "Enter the index of the playlist you want to delete:\n";
             cin >> index;
             if (index < 1 || index > playlists.size()) {
                 cout << "Invalid index." << endl;
-                return;
+                return nullptr;
             }
+            Playlist* playlist = new Playlist(playlists[index - 1]);
             playlists.erase(playlists.begin() + index - 1);
             cout << "Playlist deleted." << endl;
+            return playlist;
+        }
+        void addMusicToPlaylist(MusicHashTable& hashtable, Playlist& playlist) {
+            playlist.addMusic(hashtable);
         }
 
-        void addMusicToPlaylist(MusicHashTable& hashTable, int index) {
-            if (index < 1 || index > playlists.size()) {
-                cout << "Invalid index." << endl;
-                return;
-            }
-            playlists[index - 1].addMusic(hashTable);
-        }
-
-        void removeMusicFromPlaylist(int index) {
-            if (index < 1 || index > playlists.size()) {
-                cout << "Invalid index." << endl;
-                return;
-            }
-            playlists[index - 1].removeMusic();
+        Music* removeMusicFromPlaylist(Playlist& playlist) {
+            return playlist.removeMusic();
         }
 
         void printPlaylist(int index) {
@@ -166,5 +207,9 @@ class PlaylistManager {
 
         PlaylistNode* getPlaylistHead(int index) {
             return playlists[index - 1].getHead();
+        }
+
+        Playlist* getPlaylist(int index) {
+            return &playlists[index - 1];
         }
 };

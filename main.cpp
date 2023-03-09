@@ -1,14 +1,17 @@
 #include <bits/stdc++.h>
-#include "playback.h"
+#include "undo.h"
 using namespace std;
 
 int main() {
     MusicHashTable hashTable;
     PlaylistManager playlistManager;
     PlaybackManager playbackManager;
+    UndoStack undoStack;
     int choice;
     do {
         cout 
+            << "This is a music player.\n"
+            << "Input -1 to undo the last operation.\n"
             << "\nEnter your choice:\n"
             << "0: Music Database\n"
             << "1: Playlist\n"
@@ -17,7 +20,7 @@ int main() {
         
         cin >> choice;
         switch (choice) {
-            case 0:
+            case 0: {
                 int tableChoice;
                 do {
                     cout 
@@ -69,6 +72,11 @@ int main() {
                             Music* music = new Music(title, artist, yearRelease, spotifyLink, duration);
                             hashTable.insert(music);
                             cout << "Music added.\n";
+                            undoNode newNode;
+                            newNode.choice = "01";
+                            newNode.hashTable = &hashTable;
+                            newNode.music = music;
+                            undoStack.push(&newNode);
                             break;
                         }
 
@@ -78,12 +86,17 @@ int main() {
                             cout << "Enter the title of the music you want to remove:\n";
                             getline(cin, title);
 
-                            bool removed = hashTable.remove(title);
-                            if (removed) {
+                            Music* removed = hashTable.remove(title);
+                            if (removed != nullptr) {
                                 cout << "Music removed.\n";
                             } else {
                                 cout << "Music not found.\n";
                             }
+                            undoNode newNode;
+                            newNode.choice = "02";
+                            newNode.hashTable = &hashTable;
+                            newNode.music = removed;
+                            undoStack.push(&newNode);
                             break;
                         }
 
@@ -93,8 +106,10 @@ int main() {
                             break;
                         }
 
-                        case 4:
+                        case -1: {
+                            undoStack.undo();
                             break;
+                        }
 
                         default:
                             cout << "Invalid choice. Try again.\n";
@@ -102,8 +117,9 @@ int main() {
                     }
                 } while (tableChoice != 4);
                 break;
+            }
 
-            case 1:
+            case 1: {
                 int playlistChoice;
                 do {
                     cout 
@@ -116,17 +132,27 @@ int main() {
                     cin >> playlistChoice;
 
                     switch (playlistChoice) {
-                        case 0:
+                        case 0: {
                             playlistManager.printPlaylists();
                             break;
+                        }
 
                         case 1: {
                             playlistManager.createPlaylist();
+                            undoNode newNode;
+                            newNode.choice = "11";
+                            newNode.playlistManager = &playlistManager;
+                            undoStack.push(&newNode);
                             break;
                         }
 
                         case 2: {
-                            playlistManager.deletePlaylist();
+                            Playlist* deletedPlaylist = playlistManager.deletePlaylist();
+                            undoNode newNode;
+                            newNode.choice = "12";
+                            newNode.playlistManager = &playlistManager;
+                            newNode.playlist = deletedPlaylist;
+                            undoStack.push(&newNode);
                             break;
                         }
 
@@ -135,22 +161,34 @@ int main() {
                             cout << "Enter the index of the playlist you want to select:\n";
                             cin >> playlistIndex;
                             playlistManager.printPlaylistInfo(playlistIndex);
+                            Playlist* playlist = playlistManager.getPlaylist(playlistIndex);
                             int playlistMenuChoice;
                             do {
                                 cout << "Enter your choice:\n"
-                                    << "0: Add music\n"
-                                    << "1: Remove music\n"
+                                    << "0: Add a music to this playlist\n"
+                                    << "1: Remove a music to this playlist\n"
                                     << "2: Print playlist\n"
                                     << "3: Back to Playlist Menu\n";
                                 cin >> playlistMenuChoice;
                                 switch (playlistMenuChoice) {
                                     case 0: {
-                                        playlistManager.addMusicToPlaylist(hashTable, playlistIndex);
+                                        playlistManager.addMusicToPlaylist(hashTable, *playlist);
+                                        undoNode newNode;
+                                        newNode.choice = "130";
+                                        newNode.playlistManager = &playlistManager;
+                                        newNode.playlist = playlist;
+                                        undoStack.push(&newNode);
                                         break;
                                     }
 
                                     case 1: {
-                                        playlistManager.removeMusicFromPlaylist(playlistIndex);
+                                        Music* removedMusic = playlistManager.removeMusicFromPlaylist(*playlist);
+                                        undoNode newNode;
+                                        newNode.choice = "131";
+                                        newNode.playlistManager = &playlistManager;
+                                        newNode.playlist = playlist;
+                                        newNode.music = removedMusic;
+                                        undoStack.push(&newNode);
                                         break;
                                     }
 
@@ -158,19 +196,24 @@ int main() {
                                         playlistManager.printPlaylist(playlistIndex);
                                         break;
 
-                                    case 3:
+                                    case -1: {
+                                        undoStack.undo();
                                         break;
+                                    }
 
                                     default:
                                         cout << "Invalid choice. Try again.\n";
                                         break;
                                 }
+        
                             } while (playlistMenuChoice != 3);
                             break;
                         }
 
-                        case 4:
+                        case -1: {
+                            undoStack.undo();
                             break;
+                        }
 
                         default:
                             cout << "Invalid choice. Try again.\n";
@@ -178,8 +221,9 @@ int main() {
                     }
                 } while (playlistChoice != 4);
                 break;
+            }
 
-            case 2:
+            case 2: {
                 int playbackChoice;
                 do {
                     cout 
@@ -192,12 +236,17 @@ int main() {
                     cin >> playbackChoice;
 
                     switch (playbackChoice) {
-                        case 0:
+                        case 0: {
                             playbackManager.printPlayback();
                             break;
+                        }
 
                         case 1: {
                             playbackManager.addMusic(hashTable);
+                            undoNode newNode;
+                            newNode.choice = "21";
+                            newNode.playbackManager = &playbackManager;
+                            undoStack.push(&newNode);
                             break;
                         }
 
@@ -213,18 +262,37 @@ int main() {
                             playlistManager.printPlaylistInfo(playlistIndex);
                             PlaylistNode* playlistHead = playlistManager.getPlaylistHead(playlistIndex);
                             playbackManager.enqueuePlaylist(playlistHead);
+                            undoNode newNode;
+                            newNode.choice = "23";
+                            newNode.playbackManager = &playbackManager;
+                            Playlist* playlist = playlistManager.getPlaylist(playlistIndex);
+                            newNode.playlist = playlist;
+                            undoStack.push(&newNode);
                             break;
                         }
+
+                        case -1: {
+                            undoStack.undo();
+                            break;
+                        }
+
                         default:
                             cout << "Invalid choice. Try again.\n";
                             break;
                     }
                 } while (playbackChoice != 9);
                 break;
+            }
 
-            case 9:
+            case 9: {
                 cout << "Goodbye!\n";
                 break;
+            }
+            
+            case -1: {
+                undoStack.undo();
+                break;
+            }
 
             default:
                 cout << "Invalid choice. Try again.\n";

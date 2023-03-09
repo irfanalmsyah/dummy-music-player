@@ -1,8 +1,7 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <string>
 #include "playlist.h"
 using namespace std;
-
-const int MAX = 100;
 
 struct PlaybackNode{
     Music* music;
