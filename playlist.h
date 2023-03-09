@@ -62,7 +62,23 @@ public:
         }
     }
 
-    void removeMusic() {
+    void setMusic(Music* music) {
+        PlaylistNode* node = new PlaylistNode;
+        node->music = music;
+        node->prev = nullptr;
+        node->next = nullptr;
+        if (head == nullptr) {
+            head = node;
+            tail = node;
+        } else {
+            tail->next = node;
+            node->prev = tail;
+            tail = node;
+        }
+        cout << "Music added to the playlist: " << music->getTitle() << endl;
+    }
+
+    Music* removeMusic() {
         string title;
         cin.ignore();
         cout << "Enter the title of the music you want to remove:\n";
@@ -83,13 +99,15 @@ public:
                     current->prev->next = current->next;
                     current->next->prev = current->prev;
                 }
+                Music* music = current->music;
                 delete current;
                 cout << "Music removed from the playlist: " << title << endl;
-                return;
+                return music;
             }
             current = current->next;
         }
         cout << "Music not found in the playlist." << endl;
+        return nullptr;
     }
 
     void printPlaylist() {
@@ -113,6 +131,19 @@ public:
 
     PlaylistNode *getHead() {
         return head;
+    }
+
+    void removeTail() {
+        if (head == nullptr) {
+            return;
+        }
+        if (head == tail) {
+            head = nullptr;
+            tail = nullptr;
+        } else {
+            tail = tail->prev;
+            tail->next = nullptr;
+        }
     }
     
 };
@@ -145,34 +176,25 @@ class PlaylistManager {
             }
         }
 
-        Playlist deletePlaylist() {
+        Playlist* deletePlaylist() {
             int index;
             cout << "Enter the index of the playlist you want to delete:\n";
             cin >> index;
             if (index < 1 || index > playlists.size()) {
                 cout << "Invalid index." << endl;
-                throw "Invalid index.";
+                return nullptr;
             }
-            Playlist playlist = playlists[index - 1];
+            Playlist* playlist = new Playlist(playlists[index - 1]);
             playlists.erase(playlists.begin() + index - 1);
             cout << "Playlist deleted." << endl;
             return playlist;
         }
-
-        void addMusicToPlaylist(MusicHashTable& hashTable, int index) {
-            if (index < 1 || index > playlists.size()) {
-                cout << "Invalid index." << endl;
-                return;
-            }
-            playlists[index - 1].addMusic(hashTable);
+        void addMusicToPlaylist(MusicHashTable& hashtable, Playlist& playlist) {
+            playlist.addMusic(hashtable);
         }
 
-        void removeMusicFromPlaylist(int index) {
-            if (index < 1 || index > playlists.size()) {
-                cout << "Invalid index." << endl;
-                return;
-            }
-            playlists[index - 1].removeMusic();
+        Music* removeMusicFromPlaylist(Playlist& playlist) {
+            return playlist.removeMusic();
         }
 
         void printPlaylist(int index) {
@@ -185,5 +207,9 @@ class PlaylistManager {
 
         PlaylistNode* getPlaylistHead(int index) {
             return playlists[index - 1].getHead();
+        }
+
+        Playlist* getPlaylist(int index) {
+            return &playlists[index - 1];
         }
 };

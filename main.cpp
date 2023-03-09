@@ -147,7 +147,7 @@ int main() {
                         }
 
                         case 2: {
-                            Playlist deletedPlaylist = playlistManager.deletePlaylist();
+                            Playlist* deletedPlaylist = playlistManager.deletePlaylist();
                             undoNode newNode;
                             newNode.choice = "12";
                             newNode.playlistManager = &playlistManager;
@@ -161,22 +161,34 @@ int main() {
                             cout << "Enter the index of the playlist you want to select:\n";
                             cin >> playlistIndex;
                             playlistManager.printPlaylistInfo(playlistIndex);
+                            Playlist* playlist = playlistManager.getPlaylist(playlistIndex);
                             int playlistMenuChoice;
                             do {
                                 cout << "Enter your choice:\n"
-                                    << "0: Add music\n"
-                                    << "1: Remove music\n"
+                                    << "0: Add a music to this playlist\n"
+                                    << "1: Remove a music to this playlist\n"
                                     << "2: Print playlist\n"
                                     << "3: Back to Playlist Menu\n";
                                 cin >> playlistMenuChoice;
                                 switch (playlistMenuChoice) {
                                     case 0: {
-                                        playlistManager.addMusicToPlaylist(hashTable, playlistIndex);
+                                        playlistManager.addMusicToPlaylist(hashTable, *playlist);
+                                        undoNode newNode;
+                                        newNode.choice = "130";
+                                        newNode.playlistManager = &playlistManager;
+                                        newNode.playlist = playlist;
+                                        undoStack.push(&newNode);
                                         break;
                                     }
 
                                     case 1: {
-                                        playlistManager.removeMusicFromPlaylist(playlistIndex);
+                                        Music* removedMusic = playlistManager.removeMusicFromPlaylist(*playlist);
+                                        undoNode newNode;
+                                        newNode.choice = "131";
+                                        newNode.playlistManager = &playlistManager;
+                                        newNode.playlist = playlist;
+                                        newNode.music = removedMusic;
+                                        undoStack.push(&newNode);
                                         break;
                                     }
 
@@ -231,6 +243,10 @@ int main() {
 
                         case 1: {
                             playbackManager.addMusic(hashTable);
+                            undoNode newNode;
+                            newNode.choice = "21";
+                            newNode.playbackManager = &playbackManager;
+                            undoStack.push(&newNode);
                             break;
                         }
 
@@ -246,6 +262,12 @@ int main() {
                             playlistManager.printPlaylistInfo(playlistIndex);
                             PlaylistNode* playlistHead = playlistManager.getPlaylistHead(playlistIndex);
                             playbackManager.enqueuePlaylist(playlistHead);
+                            undoNode newNode;
+                            newNode.choice = "23";
+                            newNode.playbackManager = &playbackManager;
+                            Playlist* playlist = playlistManager.getPlaylist(playlistIndex);
+                            newNode.playlist = playlist;
+                            undoStack.push(&newNode);
                             break;
                         }
 

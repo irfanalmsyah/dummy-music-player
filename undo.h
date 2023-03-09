@@ -7,7 +7,7 @@ class undoNode {
         string choice;
         Music* music;
         MusicHashTable* hashTable;
-        Playlist playlist;
+        Playlist* playlist;
         PlaylistManager* playlistManager;
         PlaybackManager* playbackManager;
         undoNode* next;
@@ -16,6 +16,7 @@ class undoNode {
             choice = "";
             music = nullptr;
             hashTable = nullptr;
+            playlist = nullptr;
             playlistManager = nullptr;
             playbackManager = nullptr;
             next = nullptr;
@@ -91,15 +92,20 @@ class UndoStack {
                 temp->playlistManager->playlists.pop_back();
                 cout << "Adding playlist is undone." << endl;
             } else if (choice == "12") {
-                temp->playlistManager->playlists.push_back(temp->playlist);
+                temp->playlistManager->playlists.push_back(*(temp->playlist));
             } else if (choice == "130") {
-                // undo add music to the selected playlist
+                temp->playlist->removeTail();
             } else if (choice == "131") {
-                // undo remove music from the selected playlist
+                temp->playlist->setMusic(temp->music);
             } else if (choice == "21") {
-                // undo add music to the playback queue
+                temp->playbackManager->dequeue();
             } else if (choice == "23") {
-                // undo add playlist too the playback queue
+                //traverse the linked list playlist
+                PlaylistNode* head = temp->playlist->getHead();
+                while (head != nullptr) {
+                    temp->playbackManager->dequeue();
+                    head = head->next;
+                }
             }
         }
 };
