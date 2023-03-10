@@ -29,7 +29,8 @@ int main() {
                         << "1: Add music\n"
                         << "2: Remove music\n"
                         << "3: Print top 10 musics\n"
-                        << "4: Back to Main Menu\n";
+                        << "4: Print all musics\n"
+                        << "5: Back to Main Menu\n";
                     cin >> tableChoice;
 
                     switch (tableChoice) {
@@ -106,6 +107,12 @@ int main() {
                             break;
                         }
 
+                        case 4: {
+                            cout << "All musics:\n";
+                            hashTable.printAllMusic(hashTable);
+                            break;
+                        }
+
                         case -1: {
                             undoStack.undo();
                             break;
@@ -115,7 +122,7 @@ int main() {
                             cout << "Invalid choice. Try again.\n";
                             break;
                     }
-                } while (tableChoice != 4);
+                } while (tableChoice != 5);
                 break;
             }
 
