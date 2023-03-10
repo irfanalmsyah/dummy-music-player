@@ -122,6 +122,20 @@ public:
             }
         }
     }
+
+    // print all music in the hash table
+    void printAllMusic(MusicHashTable& hashTable) {
+        int totalMusic = 0;
+        for (int i = 0; i < TABLE_SIZE; i++) {
+            for (Music* music : hashTable.table[i]) {
+                music->print();
+                totalMusic++;
+            }
+        }
+        cout << "Total music in library: " << totalMusic << endl;
+    }
+
+
 };
 
 
