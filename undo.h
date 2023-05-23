@@ -79,15 +79,15 @@ class UndoStack {
             undoNode* temp = pop();
             string choice = temp->choice;
             if (choice == "01") {
-                bool removed = temp->hashTable->remove(temp->music->getTitle());
+                bool removed = temp->hashTable->remove(temp->music->title);
                 cout << removed << endl;
                 if (removed) {
-                    cout << "Adding music " << temp->music->getTitle() << " is undone." << endl;
+                    cout << "Adding music " << temp->music->title << " is undone." << endl;
                 }
                 delete temp;
             } else if (choice == "02") {
                 temp->hashTable->insert(temp->music);
-                cout << "Deleting music " << temp->music->getTitle() << " is undone." << endl;
+                cout << "Deleting music " << temp->music->title << " is undone." << endl;
             } else if (choice == "11") {
                 temp->playlistManager->playlists.pop_back();
                 cout << "Adding playlist is undone." << endl;

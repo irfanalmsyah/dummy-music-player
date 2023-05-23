@@ -49,7 +49,7 @@ class PlaybackManager{
                 PlaybackNode* temp = front;
                 int i = 1;
                 while (temp != NULL) {
-                    cout << i << ". " << temp->music->getTitle() << " - " << temp->music->getArtist() << endl;
+                    cout << i << ". " << temp->music->title << " - " << temp->music->artist << endl;
                     temp = temp->next;
                     i++;
                 }
@@ -72,7 +72,7 @@ class PlaybackManager{
         void playMusic(){
             Music* x = dequeue();
             if(x != NULL){
-                cout << "Now playing: " << x->getTitle() << " - " << x->getArtist() << endl;
+                cout << "Now playing: " << x->title << " - " << x->artist << endl;
             }
         }
 

@@ -42,8 +42,8 @@ int main() {
 
                             Music* result = hashTable.search(title);
                             if (result != nullptr) {
-                                cout << "Found music: " << result->getTitle()
-                                    << " by " << result->getArtist() << " (" << result->getYearRelease() << ")\n";
+                                cout << "Found music: " << result->title
+                                    << " by " << result->artist << " (" << result->yearRelease << ")\n";
                             } else {
                                 cout << "Music not found.\n";
                             }

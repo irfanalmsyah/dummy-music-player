@@ -75,7 +75,7 @@ public:
             node->prev = tail;
             tail = node;
         }
-        cout << "Music added to the playlist: " << music->getTitle() << endl;
+        cout << "Music added to the playlist: " << music->title << endl;
     }
 
     Music* removeMusic() {
@@ -85,7 +85,7 @@ public:
         getline(cin, title);
         PlaylistNode* current = head;
         while (current != nullptr) {
-            if (current->music->getTitle() == title) {
+            if (current->music->title == title) {
                 if (current == head && current == tail) {
                     head = nullptr;
                     tail = nullptr;
