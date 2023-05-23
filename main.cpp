@@ -113,6 +113,9 @@ int main() {
                             break;
                         }
 
+                        case 5:
+                            break;
+
                         case -1: {
                             undoStack.undo();
                             break;
@@ -203,6 +206,9 @@ int main() {
                                         playlistManager.printPlaylist(playlistIndex);
                                         break;
 
+                                    case 3:
+                                        break;
+
                                     case -1: {
                                         undoStack.undo();
                                         break;
@@ -216,6 +222,9 @@ int main() {
                             } while (playlistMenuChoice != 3);
                             break;
                         }
+
+                        case 4:
+                            break;
 
                         case -1: {
                             undoStack.undo();
@@ -277,6 +286,9 @@ int main() {
                             undoStack.push(&newNode);
                             break;
                         }
+
+                        case 9:
+                            break;
 
                         case -1: {
                             undoStack.undo();
