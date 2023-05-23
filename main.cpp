@@ -10,13 +10,13 @@ int main() {
     int choice;
     do {
         cout 
-            << "This is a music player.\n"
-            << "Input -1 to undo the last operation.\n"
-            << "\nEnter your choice:\n"
-            << "0: Music Database\n"
-            << "1: Playlist\n"
-            << "2: Playback\n"
-            << "9: Exit\n";
+            << "This is a music player." << endl
+            << "Input -1 to undo the last operation." << endl << endl
+            << "Enter your choice:" << endl
+            << "0: Music Database" << endl
+            << "1: Playlist" << endl
+            << "2: Playback" << endl
+            << "9: Exit" << endl;
         
         cin >> choice;
         switch (choice) {
@@ -35,80 +35,28 @@ int main() {
 
                     switch (tableChoice) {
                         case 0: {
-                            string title;
-                            cin.ignore();
-                            cout << "Enter the title of the music you want to search:\n";
-                            getline(cin, title);
-
-                            Music* result = hashTable.search(title);
-                            if (result != nullptr) {
-                                cout << "Found music: " << result->title
-                                    << " by " << result->artist << " (" << result->yearRelease << ")\n";
-                            } else {
-                                cout << "Music not found.\n";
-                            }
+                            hashTable.searchMusic();
                             break;
                         }
 
                         case 1: {
-                            string title, artist, spotifyLink;
-                            int yearRelease, duration;
-                            cin.ignore();
-
-                            cout << "Enter the title of the music:\n";
-                            getline(cin, title);
-
-                            cout << "Enter the name of the artist:\n";
-                            getline(cin, artist);
-
-                            cout << "Enter the year of release:\n";
-                            cin >> yearRelease;
-
-                            cout << "Enter the spotify link:\n";
-                            cin >> spotifyLink;
-
-                            cout << "Enter the duration (in seconds):\n";
-                            cin >> duration;
-
-                            Music* music = new Music(title, artist, yearRelease, spotifyLink, duration);
-                            hashTable.insert(music);
-                            cout << "Music added.\n";
-                            undoNode newNode;
-                            newNode.choice = "01";
-                            newNode.hashTable = &hashTable;
-                            newNode.music = music;
-                            undoStack.push(&newNode);
+                            Music* music = hashTable.addMusic();
+                            undoStack.addUndo(&hashTable, music, "01");
                             break;
                         }
 
                         case 2: {
-                            string title;
-                            cin.ignore();
-                            cout << "Enter the title of the music you want to remove:\n";
-                            getline(cin, title);
-
-                            Music* removed = hashTable.remove(title);
-                            if (removed != nullptr) {
-                                cout << "Music removed.\n";
-                            } else {
-                                cout << "Music not found.\n";
-                            }
-                            undoNode newNode;
-                            newNode.choice = "02";
-                            newNode.hashTable = &hashTable;
-                            newNode.music = removed;
-                            undoStack.push(&newNode);
+                            Music* removed = hashTable.removeMusic();
+                            undoStack.addUndo(&hashTable, removed, "02");
                             break;
                         }
 
                         case 3: {
-                            cout << "Top 10 musics:\n";
                             hashTable.printTop10(hashTable);
                             break;
                         }
 
                         case 4: {
-                            cout << "All musics:\n";
                             hashTable.printAllMusic(hashTable);
                             break;
                         }
@@ -149,20 +97,13 @@ int main() {
 
                         case 1: {
                             playlistManager.createPlaylist();
-                            undoNode newNode;
-                            newNode.choice = "11";
-                            newNode.playlistManager = &playlistManager;
-                            undoStack.push(&newNode);
+                            undoStack.addUndo(&playlistManager);
                             break;
                         }
 
                         case 2: {
                             Playlist* deletedPlaylist = playlistManager.deletePlaylist();
-                            undoNode newNode;
-                            newNode.choice = "12";
-                            newNode.playlistManager = &playlistManager;
-                            newNode.playlist = deletedPlaylist;
-                            undoStack.push(&newNode);
+                            undoStack.addUndo(&playlistManager, deletedPlaylist, "12");
                             break;
                         }
 
@@ -176,29 +117,20 @@ int main() {
                             do {
                                 cout << "Enter your choice:\n"
                                     << "0: Add a music to this playlist\n"
-                                    << "1: Remove a music to this playlist\n"
+                                    << "1: Remove a music from this playlist\n"
                                     << "2: Print playlist\n"
                                     << "3: Back to Playlist Menu\n";
                                 cin >> playlistMenuChoice;
                                 switch (playlistMenuChoice) {
                                     case 0: {
                                         playlistManager.addMusicToPlaylist(hashTable, *playlist);
-                                        undoNode newNode;
-                                        newNode.choice = "130";
-                                        newNode.playlistManager = &playlistManager;
-                                        newNode.playlist = playlist;
-                                        undoStack.push(&newNode);
+                                        undoStack.addUndo(&playlistManager, playlist, "130");
                                         break;
                                     }
 
                                     case 1: {
                                         Music* removedMusic = playlistManager.removeMusicFromPlaylist(*playlist);
-                                        undoNode newNode;
-                                        newNode.choice = "131";
-                                        newNode.playlistManager = &playlistManager;
-                                        newNode.playlist = playlist;
-                                        newNode.music = removedMusic;
-                                        undoStack.push(&newNode);
+                                        undoStack.addUndo(&playlistManager, playlist, removedMusic);
                                         break;
                                     }
 
@@ -259,10 +191,7 @@ int main() {
 
                         case 1: {
                             playbackManager.addMusic(hashTable);
-                            undoNode newNode;
-                            newNode.choice = "21";
-                            newNode.playbackManager = &playbackManager;
-                            undoStack.push(&newNode);
+                            undoStack.addUndo(&playbackManager);
                             break;
                         }
 
@@ -278,12 +207,8 @@ int main() {
                             playlistManager.printPlaylistInfo(playlistIndex);
                             PlaylistNode* playlistHead = playlistManager.getPlaylistHead(playlistIndex);
                             playbackManager.enqueuePlaylist(playlistHead);
-                            undoNode newNode;
-                            newNode.choice = "23";
-                            newNode.playbackManager = &playbackManager;
                             Playlist* playlist = playlistManager.getPlaylist(playlistIndex);
-                            newNode.playlist = playlist;
-                            undoStack.push(&newNode);
+                            undoStack.addUndo(&playbackManager, playlist);
                             break;
                         }
 

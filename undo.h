@@ -101,11 +101,65 @@ class UndoStack {
                 temp->playbackManager->dequeue();
             } else if (choice == "23") {
                 //traverse the linked list playlist
-                PlaylistNode* head = temp->playlist->getHead();
+                PlaylistNode* head = temp->playlist->head;
                 while (head != nullptr) {
                     temp->playbackManager->dequeue();
                     head = head->next;
                 }
             }
+        }
+
+        // add and remove music
+        void addUndo(MusicHashTable* hashTable, Music* music, string choice) {
+            undoNode* newNode = new undoNode();
+            newNode->choice = choice;
+            newNode->hashTable = hashTable;
+            newNode->music = music;
+            push(newNode);
+        }
+
+        // create playlist
+        void addUndo(PlaylistManager* playlistManager) {
+            undoNode* newNode = new undoNode();
+            newNode->choice = "11";
+            newNode->playlistManager = playlistManager;
+            push(newNode);
+        }
+
+        // delete playlist and add music to playlist
+        void addUndo(PlaylistManager* playlistManager, Playlist* playlist, string choice) {
+            undoNode* newNode = new undoNode();
+            newNode->choice = choice;
+            newNode->playlistManager = playlistManager;
+            newNode->playlist = playlist;
+            push(newNode);
+        }
+
+
+        // remove music from playlist
+        void addUndo(PlaylistManager* playlistManager, Playlist* playlist, Music* music) {
+            undoNode* newNode = new undoNode();
+            newNode->choice = "131";
+            newNode->playlistManager = playlistManager;
+            newNode->playlist = playlist;
+            newNode->music = music;
+            push(newNode);
+        }
+
+        // add music to playback
+        void addUndo(PlaybackManager* playbackManager) {
+            undoNode* newNode = new undoNode();
+            newNode->choice = "21";
+            newNode->playbackManager = playbackManager;
+            push(newNode);
+        }
+
+        // add playlist to playback
+        void addUndo(PlaybackManager* playbackManager, Playlist* playlist) {
+            undoNode* newNode = new undoNode();
+            newNode->choice = "23";
+            newNode->playbackManager = playbackManager;
+            newNode->playlist = playlist;
+            push(newNode);
         }
 };

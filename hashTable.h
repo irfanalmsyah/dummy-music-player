@@ -8,8 +8,6 @@ public:
     int yearRelease;
     string spotifyLink;
     int duration;
-    
-    Music() {}
 
     Music(string title, string artist, int yearRelease, string spotifyLink, int duration) {
         this->title = title;
@@ -47,8 +45,6 @@ private:
         return hash;
     }
 public:
-    MusicHashTable() {}
-
     void insert(Music* music) {
         int index = hash(music->title);
         table[index].push_back(music);
@@ -75,9 +71,65 @@ public:
         }
         return nullptr;
     }
+    Music* addMusic() {
+        string title, artist, spotifyLink;
+        int yearRelease, duration;
+        cin.ignore();
+
+        cout << "Enter the title of the music:\n";
+        getline(cin, title);
+
+        cout << "Enter the name of the artist:\n";
+        getline(cin, artist);
+
+        cout << "Enter the year of release:\n";
+        cin >> yearRelease;
+
+        cout << "Enter the spotify link:\n";
+        cin >> spotifyLink;
+
+        cout << "Enter the duration (in seconds):\n";
+        cin >> duration;
+
+        Music* music = new Music(title, artist, yearRelease, spotifyLink, duration);
+        insert(music);
+        cout << "Music added." << endl;
+        return music;
+    }
+
+    Music* removeMusic() {
+        string title;
+        cin.ignore();
+        cout << "Enter the title of the music:\n";
+        getline(cin, title);
+        Music* music = remove(title);
+        if (music == nullptr) {
+            cout << "Music not found." << endl;
+        }
+        else {
+            cout << "Music removed." << endl;
+        }
+        return music;
+    }
+
+    void searchMusic() {
+        string title;
+        cin.ignore();
+        cout << "Enter the title of the music:\n";
+        getline(cin, title);
+        Music* music = search(title);
+        if (music == nullptr) {
+            cout << "Music not found." << endl;
+        }
+        else {
+            cout << "Music found." << endl;
+            music->print();
+        }
+    }
 
     void printTop10(MusicHashTable& hashTable) {
         int count = 0;
+        cout << "Top 10 musics:\n";
         for (int i = 0; i < TABLE_SIZE; i++) {
             for (Music* music : hashTable.table[i]) {
                 music->print();
@@ -89,9 +141,9 @@ public:
         }
     }
 
-    // print all music in the hash table
     void printAllMusic(MusicHashTable& hashTable) {
         int totalMusic = 0;
+        cout << "All musics:\n";
         for (int i = 0; i < TABLE_SIZE; i++) {
             for (Music* music : hashTable.table[i]) {
                 music->print();
@@ -100,8 +152,6 @@ public:
         }
         cout << "Total music in library: " << totalMusic << endl;
     }
-
-
 };
 
 

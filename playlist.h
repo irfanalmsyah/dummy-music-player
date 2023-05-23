@@ -11,30 +11,16 @@ struct PlaylistNode {
 };
 
 class Playlist {
-private:
+public:
     string title;
     string description;
     PlaylistNode* head;
     PlaylistNode* tail;
-public:
-    Playlist() {
-        title = "";
-        description = "";
-        head = nullptr;
-        tail = nullptr;
-    }
-
-    void setter(string title, string description) {
+    Playlist(string title, string description) {
         this->title = title;
         this->description = description;
-    }
-
-    void setHead(PlaylistNode* head) {
-        this->head = head;
-    }
-
-    void setTail(PlaylistNode* tail) {
-        this->tail = tail;
+        head = nullptr;
+        tail = nullptr;
     }
 
     void addMusic(MusicHashTable& hashTable) {
@@ -129,10 +115,6 @@ public:
         cout << "Playlist: " << title << " - " << description << endl;
     }
 
-    PlaylistNode *getHead() {
-        return head;
-    }
-
     void removeTail() {
         if (head == nullptr) {
             return;
@@ -158,8 +140,7 @@ class PlaylistManager {
             getline(cin, title);
             cout << "Enter the description of the playlist:\n";
             getline(cin, description);
-            Playlist playlist;
-            playlist.setter(title, description);
+            Playlist playlist(title, description);
             playlists.push_back(playlist);
             cout << "Playlist created." << endl;
             return playlist;
@@ -206,7 +187,7 @@ class PlaylistManager {
         }
 
         PlaylistNode* getPlaylistHead(int index) {
-            return playlists[index - 1].getHead();
+            return playlists[index - 1].head;
         }
 
         Playlist* getPlaylist(int index) {
