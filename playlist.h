@@ -23,6 +23,22 @@ public:
         tail = nullptr;
     }
 
+    string getTitle() const {
+        return title;
+    }
+
+    void setTitle(string title) {
+        this->title = title;
+    }
+
+    string getDescription() const {
+        return description;
+    }
+
+    void setDescription(string description) {
+        this->description = description;
+    }    
+
     void addMusic(MusicHashTable& hashTable) {
         string title;
         cin.ignore();
@@ -127,7 +143,64 @@ public:
             tail->next = nullptr;
         }
     }
-    
+
+    ///playlist gui functions///
+    Music* addMusictoThisPlaylist(string title, MusicHashTable& hashTable) {
+        Music* result = hashTable.search(title);
+        if (result != NULL) {
+            PlaylistNode* node = new PlaylistNode;
+            node->music = result;
+            node->prev = nullptr;
+            node->next = nullptr;
+            if (head == nullptr) {
+                head = node;
+                tail = node;
+            } else {
+                tail->next = node;
+                node->prev = tail;
+                tail = node;
+            }
+            return result;
+        } else {
+            return nullptr;
+        }
+    }
+
+    Music* removeMusicfromThisPlaylist(string title) {
+        PlaylistNode* current = head;
+        while (current != nullptr) {
+            if (current->music->title == title) {
+                if (current == head && current == tail) {
+                    head = nullptr;
+                    tail = nullptr;
+                } else if (current == head) {
+                    head = current->next;
+                    head->prev = nullptr;
+                } else if (current == tail) {
+                    tail = current->prev;
+                    tail->next = nullptr;
+                } else {
+                    current->prev->next = current->next;
+                    current->next->prev = current->prev;
+                }
+                Music* music = current->music;
+                delete current;
+                return music;
+            }
+            current = current->next;
+        }
+        return nullptr;
+    }
+
+    vector<Music*> getMusics() {
+        vector<Music*> musics;
+        PlaylistNode* current = head;
+        while (current != nullptr) {
+            musics.push_back(current->music);
+            current = current->next;
+        }
+        return musics;
+    }
 };
 
 class PlaylistManager {
@@ -192,5 +265,10 @@ class PlaylistManager {
 
         Playlist* getPlaylist(int index) {
             return &playlists[index - 1];
+        }
+
+        /// playlistmanager gui functions ///
+        vector<Playlist> getPlaylists() {
+            return playlists;
         }
 };
