@@ -17,6 +17,22 @@ public:
         this->duration = duration;
     }
 
+    string getTitle() const {
+        return title;
+    }
+
+    string getArtist() const {
+        return artist;
+    }
+
+    int getYearRelease() const {
+        return yearRelease;
+    }
+
+    string getSpotifyLink() const {
+        return spotifyLink;
+    }   
+
     string strDuration() const {
         int minutes = duration / 60;
         int seconds = duration % 60;
@@ -152,6 +168,39 @@ public:
         }
         cout << "Total music in library: " << totalMusic << endl;
     }
+
+    //////////////gui functions/////////////////////
+    vector<Music *> getTop10()
+    {
+        vector<Music *> top10;
+        int count = 0;
+        for (int i = 0; i < TABLE_SIZE; i++)
+        {
+            for (Music *music : table[i])
+            {
+                top10.push_back(music);
+                count++;
+                if (count == 10)
+                {
+                    return top10;
+                }
+            }
+        }
+        return top10;
+    }
+
+    vector <Music *> getAllMusics()
+    {
+        vector<Music *> allMusic;
+        for (int i = 0; i < TABLE_SIZE; i++)
+        {
+            for (Music *music : table[i])
+            {
+                allMusic.push_back(music);
+            }
+        }
+        return allMusic;
+    }    
 };
 
 

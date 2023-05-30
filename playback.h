@@ -17,6 +17,15 @@ class PlaybackManager{
             front = NULL;
             rear = NULL;
         }
+
+        PlaybackNode* getFront() const {
+            return front;
+        }
+
+        PlaybackNode* getRear() const {
+            return rear;
+        }
+
         void enqueue(Music* music){
             PlaybackNode* newNode = new PlaybackNode;
             newNode->music = music;
@@ -82,5 +91,26 @@ class PlaybackManager{
                 enqueue(current->music);
                 current = current->next;
             }
+        }
+
+        /////playback gui functions////////
+        Music* addMusictoThisPlayback(string title, MusicHashTable& hashTable){
+            Music* result = hashTable.search(title);
+            if (result != NULL) {
+                enqueue(result);
+                return result;
+            } else {
+                return NULL;
+            }
+        }
+
+        Music* playMusicfromThisPlayback()
+        {
+            Music* x = dequeue();
+            if(x != NULL)
+            {
+                return x;
+            }
+            return NULL;
         }
 };
